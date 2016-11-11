@@ -1,5 +1,5 @@
 package ex1;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * A producer-consumer queue
@@ -9,29 +9,23 @@ import java.util.LinkedList;
  */
 public class SynchronizedQueue<T> {
 
-    private LinkedList<T> Data;
+    private ArrayList<T> Data;
 
-    public SynchronizedQueue() {
-        Data = new LinkedList<T>();
-    }
+    public SynchronizedQueue() {Data = new ArrayList<T>();}
 
     /**
      * Pops the first element in the queue (returns it, and removes it)
      * @return the first element. or null if the queue is empty.
      */
     public synchronized T getNext() {
-        if (Data.size() == 0) {
-            return null;
-        }
-
-        return Data.removeFirst();
-    }
+		return Data.isEmpty() ? null : Data.remove(0);
+	}
 
     /**
      * Adds an element to the end of the queue
-     * @param t    the element to add
+     * @param e    the element to add
      */
-    public synchronized void enqueue(T t) {
-        Data.addLast(t);
-    }
+    public synchronized void enqueue(T e) {
+		Data.add(Data.size() - 1, e);
+	}
 }
