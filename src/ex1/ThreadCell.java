@@ -2,10 +2,10 @@ package ex1;
 
 import java.util.ArrayList;
 
-public class ThreadObj extends Thread {
+public class ThreadCell extends Thread {
 
     //region Private Properties
-    private ThreadObj[][] threadArrayRef;               // A reference to the array that contains all of the ThreadObjs.
+    private ThreadCell[][] threadArrayRef;               // A reference to the array that contains all of the ThreadObjs.
     private Point threadArraySize;                    // The size of the thread array.
     private Point threadLocation;                     // The position of this ThreadObj in the threadArray.
 
@@ -25,7 +25,7 @@ public class ThreadObj extends Thread {
     //endregion
 
     //region Constructor
-    public ThreadObj(boolean[][] initialField, ThreadObj[][] threadArray, int maxGen,
+    public ThreadCell(boolean[][] initialField, ThreadCell[][] threadArray, int maxGen,
                      Point threadArraySize, Point threadLocation, Point minPoint, Point maxPoint) {
         //region Init the private fields
         this.threadArrayRef = threadArray;
