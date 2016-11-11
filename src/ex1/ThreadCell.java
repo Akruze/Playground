@@ -4,25 +4,30 @@ import java.util.ArrayList;
 
 public class ThreadCell extends Thread {
 
-    //region Private Properties
-    private ThreadCell[][] threadArrayRef;               // A reference to the array that contains all of the ThreadObjs.
-    private Point threadArraySize;                    // The size of the thread array.
-    private Point threadLocation;                     // The position of this ThreadObj in the threadArray.
+	// Reference to an array that contains all threads
+	private ThreadCell[][] threadArrayRef;
+	private Point threadArraySize;
+	//Position of the current thread in the array
+	private Point threadLocation;
 
-    private Point minPoint;                           // start index on the real full board
-    private Point maxPoint;                           // end index on the real full board
+	//Start index on the original board
+	private Point minPoint;
+	//End index
+	private Point maxPoint;
 
-    private int maxGen;                                 // The number of generations that need to be calculated
+	private int maxGen;
 
-    private SynchronizedQueue<IndexedCell> syncQueue;   // A queue that holds the incoming cells from the neighboring ThreadObjs in the thread array.
+	// A queue that holds the cells from the neighboring threads from the thread array.
+	private SynchronizedQueue<IndexedCell> syncQueue;
 
-    private Cell[][] cellArray;                         // An array to store all the cells that this ThreadObj works on.
-                                                            // This array also has a "ghost-boarder" - this boarder will store the incoming cells from the neighboring ThreadObjs.
-                                                            // The queue will dump its content to this boarder.
-    private Point cellArraySize;                      // The size of the cell array
+	/* Holds the cells of the current thread
+	 * Includes the cells of its neighbors
+	 */
+	private Cell[][] cellArray;                        
 
-    private Point start, end;                         // start and end indexes (x and y) of the relevant part of the cell array (excluding the ghost-boarder)
-    //endregion
+	private Point cellArraySize;
+
+	private Point start, end;
 
     //region Constructor
     public ThreadCell(boolean[][] initialField, ThreadCell[][] threadArray, int maxGen,
