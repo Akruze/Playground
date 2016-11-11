@@ -9,16 +9,16 @@ import java.util.ArrayList;
  */
 public class SynchronizedQueue<T> {
 
-    private ArrayList<T> Data;
+    private ArrayList<T> cells;
 
-    public SynchronizedQueue() {Data = new ArrayList<T>();}
+    public SynchronizedQueue() {cells = new ArrayList<T>();}
 
     /**
      * Pops the first element in the queue (returns it, and removes it)
      * @return the first element. or null if the queue is empty.
      */
     public synchronized T getNext() {
-		return Data.isEmpty() ? null : Data.remove(0);
+		return cells.isEmpty() ? null : cells.remove(0);
 	}
 
     /**
@@ -26,6 +26,6 @@ public class SynchronizedQueue<T> {
      * @param e    the element to add
      */
     public synchronized void enqueue(T e) {
-		Data.add(Data.size() - 1, e);
+		cells.add(cells.size() - 1, e);
 	}
 }
