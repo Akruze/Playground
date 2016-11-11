@@ -3,11 +3,13 @@ package ex1;
 public class Cell {
 	private boolean currAlive,prevAlive;
 	private int currGen;
+	private Point location; //Location on original board
 	
 	public Cell (boolean currAlive,boolean prevAlive,int currGen){
 		this.currAlive=currAlive;
 		this.prevAlive = prevAlive;
 		this.currGen = currGen;
+		setPoint(null);
 	}
 	
 	public Cell (Cell c){
@@ -44,6 +46,14 @@ public class Cell {
 		this.currAlive=state;
 		this.prevAlive = currAlive;
 		++this.currGen;
+	}
+
+	public Point getPoint() {
+		return location;
+	}
+
+	public void setPoint(Point location) {
+		this.location = location;
 	}
 	
 	
