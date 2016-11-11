@@ -18,7 +18,7 @@ public class ThreadCell extends Thread {
 	private int maxGen;
 
 	// A queue that holds the cells from the neighboring threads from the thread array.
-	private SynchronizedQueue<IndexedCell> syncQueue;
+	private SynchronizedQueue<Cell> syncQueue;
 
 	/* Holds the cells of the current thread
 	 * Includes the cells of its neighbors
@@ -40,7 +40,7 @@ public class ThreadCell extends Thread {
         this.minPoint = new Point(minPoint);
         this.maxPoint = new Point(maxPoint);
         this.maxGen = maxGen;
-        this.syncQueue = new SynchronizedQueue<IndexedCell>();
+        this.syncQueue = new SynchronizedQueue<Cell>();
         this.cellArraySize = new Point(maxPoint.getX()-minPoint.getX()+1+2,maxPoint.getY()-minPoint.getY()+1+2);   // the original size of this part of the board, plus the padding of the ghost-boarder
         this.cellArray = new Cell[this.cellArraySize.getX()][this.cellArraySize.getY()];
         this.start = new Point(1, 1); // (0,0) is part of the ghost board
@@ -54,19 +54,24 @@ public class ThreadCell extends Thread {
             	if(this.maxPoint.getX()==0){ /*case the thread works on the top row and the ghost board needs to be filled with dead units*/
             		if(i==0)
             			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
             	}
             	if(this.minPoint.getX()==initialField.length){ /*case the thread works on the bottom row and the ghost board needs to be filled with dead units*/
             		if(i==this.cellArraySize.getX()-1)
             			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
             	}
             	if(this.maxPoint.getY()==0){ /*case the thread works on the most left column and the ghost board needs to be filled with dead units*/
             		if(j==0)
             			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
             	}
             	if(this.maxPoint.getY()==initialField[0].length){ /*case the thread works on the most right column and the ghost board needs to be filled with dead units*/
             		if(j==this.cellArraySize.getY()-1)
             			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
             	}
+            	this.cellArray[i][j] = new Cell(initialField[maxPoint.getX()+i][maxPoint.getY()+j],false,0); //assume that the unit was dead before gen 0
             }
         }
         //endregion
@@ -92,9 +97,9 @@ public class ThreadCell extends Thread {
                             reachedMaxGen = false;
                     }
                 }
-            } /*************************************************/
+            } /************************************************finished until here except for functions*/
 
-            if (!GhostBoarderFinished()) {  // check if the ghost-boarder has finished to be filled (look in GhostBoarderFinished)
+            if (!GhostBoarderFinished()) {  // check if the ghost-boarder part has finished to be filled
                 while (!UnpackQueue()) {}   // unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
                                                 // if there was nothing to unpack, there is noting new to calculate
                                                 // also, we know that more stuff needs to be unpacked because GhostBoarderFinished() was false
