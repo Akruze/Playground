@@ -29,6 +29,7 @@ public class ThreadCell extends Thread {
 
 	private Point start, end;
 
+
     //region Constructor
     public ThreadCell(boolean[][] initialField, ThreadCell[][] threadArray, int maxGen,
                      Point threadArraySize, Point threadLocation, Point minPoint, Point maxPoint) {
@@ -50,13 +51,22 @@ public class ThreadCell extends Thread {
         Point boardSize = new Point(initialField.length, initialField[0].length);
         for (int i = 0; i < this.cellArraySize.getX(); i++) {
             for (int j = 0; j < this.cellArraySize.getY(); j++) {
-            	if(this.maxPoint.getX()==0){ /*case the thread works on the top row and the ghost board need to be filled with dead units*/
+            	if(this.maxPoint.getX()==0){ /*case the thread works on the top row and the ghost board needs to be filled with dead units*/
             		if(i==0)
             			this.cellArray[i][j] = new Cell(false,false,0);
             	}
-            		
-                Point from = Point.Mod(Point.Add(minPoint, Point.Add(boardSize, new Point(i - 1, j - 1))), boardSize);
-                this.cellArray[i][j] = new Cell(initialField[from.getX()][from.getY()]);
+            	if(this.minPoint.getX()==initialField.length){ /*case the thread works on the bottom row and the ghost board needs to be filled with dead units*/
+            		if(i==this.cellArraySize.getX()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            	}
+            	if(this.maxPoint.getY()==0){ /*case the thread works on the most left column and the ghost board needs to be filled with dead units*/
+            		if(j==0)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            	}
+            	if(this.maxPoint.getY()==initialField[0].length){ /*case the thread works on the most right column and the ghost board needs to be filled with dead units*/
+            		if(j==this.cellArraySize.getY()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            	}
             }
         }
         //endregion
@@ -70,22 +80,19 @@ public class ThreadCell extends Thread {
     @Override
     public void run() {
         boolean reachedMaxGen = false;  // Will determine whether all of the relevant cells have reached maxGen
-
         while (!reachedMaxGen) {    // If the relevant cells haven't reached the maxGen, continue the calculation
             reachedMaxGen = true;
 
             for (int i = start.getX(); i <= end.getX(); i++) {
                 for (int j = start.getY(); j <= end.getY(); j++) {
-                    if (cellArray[i][j].GetTopGenerationNum() == maxGen)    // if this cell has reached maxGen, no need to calculate its next generation
-                        continue;
-
-                    if (UpdateCellIfPossible(i, j))                         // update the cell if possible.
-                        SendCellIfNeeded(i, j);                             // if possible, than send the cell to the neighboring ThreadObjs if needed.
-
-                    if (cellArray[i][j].GetTopGenerationNum() < maxGen)     // if this cell still didn't reach the maxGen
-                        reachedMaxGen = false;
+                    if (cellArray[i][j].getCurrGen() != maxGen){
+                    	if (UpdateCellIfPossible(i, j))                 // update the cell if possible and needed.
+                    		SendCellIfNeeded(i, j);
+                    	if (cellArray[i][j].getCurrGen() < maxGen)     // if this cell still didn't reach the maxGen
+                            reachedMaxGen = false;
+                    }
                 }
-            }
+            } /*************************************************/
 
             if (!GhostBoarderFinished()) {  // check if the ghost-boarder has finished to be filled (look in GhostBoarderFinished)
                 while (!UnpackQueue()) {}   // unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
