@@ -36,6 +36,7 @@ public class Cell {
 	public boolean genState(int gen){
 		if (gen == currGen)
 			return currAlive;
+		//In case we want to get its current state on gen number 0 - return null
 		return gen == currGen - 1 ? prevAlive : (Boolean) null;
 	}
 	
