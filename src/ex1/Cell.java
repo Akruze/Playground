@@ -32,20 +32,17 @@ public class Cell {
 		return prevAlive;
 	}
 	
+	@SuppressWarnings("null")
 	public boolean genState(int gen){
-		if(gen==currGen){
+		if (gen == currGen)
 			return currAlive;
-		}
-		if(gen == currGen-1){
-			return prevAlive;
-		}
-		return (Boolean) null;
+		return gen == currGen - 1 ? prevAlive : (Boolean) null;
 	}
 	
 	public void Advance(boolean state){
 		this.currAlive=state;
 		this.prevAlive = currAlive;
-		this.currGen++;
+		++this.currGen;
 	}
 	
 	
