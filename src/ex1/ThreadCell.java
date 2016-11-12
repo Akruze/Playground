@@ -184,24 +184,27 @@ public class ThreadCell extends Thread {
 
     //region Queue Unpacking Functions
     /**
-     * Places an indexedCell (a cell sent from a neighboring ThreadObj via the syncQueue) in the cellArray
-     * @param ic    the indexed cell
+     * Places an Cell from the queue in the cellArray (Updated from Ron)
+     * @param cell    the cell to be placed
      */
-    private void PlaceIndexedCell(IndexedCell ic) {
+    private void PlaceIndexedCell(Cell cell) {
         int toX = 0;
         int toY = 0;
 
-        if (ic.GetRelativeThreadPoint().getX() == 0)
-            toX = ic.GetFromPoint().getX();
-        else if (ic.GetRelativeThreadPoint().getX() < 0)
+        if (cell.getPoint().getX()<this.minPoint.getX()) /*case the cell is in the most left column*/
+            toX = 0;
+        else if (cell.getPoint().getX()>this.maxPoint.getX()) /*case the cell is in the most right column*/
             toX = this.cellArraySize.getX() - 1;
+        else toX = this.maxPoint.getX()-this.minPoint.getX(); /*case the cell is in between*/
 
-        if (ic.GetRelativeThreadPoint().getY() == 0)
-            toY = ic.GetFromPoint().getY();
-        else if (ic.GetRelativeThreadPoint().getY() < 0)
+        if (cell.getPoint().getY()<this.minPoint.getY()) /*case the cell is in the first row*/
+            toY = 0;
+        else if (cell.getPoint().getY()>this.maxPoint.getY()) /*case the cell is in the bottom row*/
             toY = this.cellArraySize.getY() - 1;
+        else toY = this.maxPoint.getY()-this.minPoint.getY(); /*case the cell is in between*/
 
-        cellArray[toX][toY] = ic.GetCell();
+
+        cellArray[toX][toY] = new Cell(cell);
     }
 
     /**
