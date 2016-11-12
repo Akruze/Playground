@@ -31,10 +31,9 @@ public class ThreadCell extends Thread {
 	private Point start, end;
 
 
-    //region Constructor
-    public ThreadCell(boolean[][] initialField, ThreadCell[][] threadArray, int maxGen,
+    public ThreadCell(boolean[][] initialBoard, ThreadCell[][] threadArray, int maxGen,
                      Point threadArraySize, Point threadLocation, Point minPoint, Point maxPoint) {
-        //region Init the private fields
+        //Init the private fields
         this.threadArrayRef = threadArray;
         this.threadArraySize = new Point(threadArraySize);
         this.threadLocation = new Point(threadLocation);
@@ -42,44 +41,41 @@ public class ThreadCell extends Thread {
         this.maxPoint = new Point(maxPoint);
         this.maxGen = maxGen;
         this.syncQueue = new SynchronizedQueue<Cell>();
-        this.cellArraySize = new Point(maxPoint.getX()-minPoint.getX()+1+2,maxPoint.getY()-minPoint.getY()+1+2);   // the original size of this part of the board, plus the padding of the ghost-boarder
+        this.cellArraySize = new Point(maxPoint.getX() - minPoint.getX() + 3,maxPoint.getY() - minPoint.getY() + 3);   // the original size of this part of the board, plus the padding of the ghost-boarder
         this.cellArray = new Cell[this.cellArraySize.getX()][this.cellArraySize.getY()];
-        this.start = new Point(1, 1); // (0,0) is part of the ghost board
+        this.start = new Point(1, 1); //(0,0) is part of the neighbor's board
         this.end = new Point (cellArraySize.getX()-2,cellArraySize.getY()-2);
-        //endregion
 
-        //region Copy the relevant part of the initialField to the cellArray (including the ghost-boarder)
-        Point boardSize = new Point(initialField.length, initialField[0].length);
-        for (int i = 0; i < this.cellArraySize.getX(); i++) {
-            for (int j = 0; j < this.cellArraySize.getY(); j++) {
-            	if(this.minPoint.getX()==0){ /*case the thread works on the top row and the ghost board needs to be filled with dead units*/
-            		if(i==0)
-            			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
-            	}
-            	if(this.maxPoint.getX()==initialField.length){ /*case the thread works on the bottom row and the ghost board needs to be filled with dead units*/
-            		if(i==this.cellArraySize.getX()-1)
-            			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
-            	}
-            	if(this.minPoint.getY()==0){ /*case the thread works on the most left column and the ghost board needs to be filled with dead units*/
-            		if(j==0)
-            			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
-            	}
-            	if(this.maxPoint.getY()==initialField[0].length){ /*case the thread works on the most right column and the ghost board needs to be filled with dead units*/
-            		if(j==this.cellArraySize.getY()-1)
-            			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
-            	}
-            	this.cellArray[i][j] = new Cell(initialField[maxPoint.getX()+i][maxPoint.getY()+j],false,0); //assume that the unit was dead before gen 0
-            }
-        }
-        //endregion
+        //Copy the relevant part to the cellArray (including neighbors)
+        for (int i = 0; i < this.cellArraySize.getX(); ++i)
+			for (int j = 0; j < this.cellArraySize.getY(); ++j) {
+				if (this.minPoint.getX() == 0) {
+					if (i == 0)
+						this.cellArray[i][j] = new Cell(false, false, 0);
+					continue;
+				}
+				if (this.maxPoint.getX() == initialBoard.length) {
+					if (i == this.cellArraySize.getX() - 1)
+						this.cellArray[i][j] = new Cell(false, false, 0);
+					continue;
+				}
+				if (this.minPoint.getY() == 0) {
+					if (j == 0)
+						this.cellArray[i][j] = new Cell(false, false, 0);
+					continue;
+				}
+				if (this.maxPoint.getY() == initialBoard[0].length) {
+					if (j == this.cellArraySize.getY() - 1)
+						this.cellArray[i][j] = new Cell(false, false, 0);
+					continue;
+				}
+				this.cellArray[i][j] =
+						new Cell(initialBoard[i + maxPoint.getX()][j + maxPoint.getY()],
+								false,
+								0);
+			}
     }
-    //endregion
 
-    //region Public Functions
     /**
      * The Threads run() function
      */
@@ -132,7 +128,9 @@ public class ThreadCell extends Thread {
 
     //region Send Calculated Cell To Other Threads
     /**
-     * Send the cell at (x,y) to the neighboring cells, only if (x,y) is on the inner boarder (the most outer boarder that is not the ghost boarder)
+     * Send the cell at (x,y) to the neighboring cells,
+     * only if (x,y) is on the inner boarder
+     * (the most outer boarder that is not the ghost boarder)
      * @param x x position
      * @param y y position
      */
