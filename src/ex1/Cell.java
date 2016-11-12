@@ -20,6 +20,7 @@ public class Cell {
 		this.currAlive=c.currAlive;
 		this.prevAlive = c.prevAlive;
 		this.currGen = c.currGen;
+		this.location = new Point(c.location);
 	}
 	
 	public int getCurrGen(){
