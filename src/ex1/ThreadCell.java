@@ -27,6 +27,7 @@ public class ThreadCell extends Thread {
 
 	private Point cellArraySize;
 
+	//Used to indicate the cells that belong solely to the thread
 	private Point start, end;
 
 
