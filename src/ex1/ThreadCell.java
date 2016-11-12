@@ -226,13 +226,13 @@ public class ThreadCell extends Thread {
     //region Update Cell Functions
 
     /**
-     * Calculates the number of live neighbors (if possible)
+     * Calculates the number of live neighbors (if possible) (Updated From Ron)
      * @param x    x position of the cell
      * @param y    y position of the cell
      * @return the number of live neighbors, or null if can't calculate (the neighbors don't have the right generation calculated)
      */
     private Integer NumOfLiveNeighbors(int x, int y) {
-        int genToCalcMinusOne = cellArray[x][y].GetTopGenerationNum();
+        int genToCalcMinusOne = cellArray[x][y].getCurrGen();
         int count = 0;
 
         for (int i = x-1; i <= x+1; i++) {
@@ -240,7 +240,7 @@ public class ThreadCell extends Thread {
                 if (i==x && j==y)
                     continue;
 
-                Boolean b = cellArray[i][j].GetGenIfExist(genToCalcMinusOne);
+                Boolean b = cellArray[i][j].genState(genToCalcMinusOne);
                 if (b == null)
                     return null;
                 if (b)
