@@ -270,7 +270,7 @@ public class ThreadCell extends Thread {
 
     //region Checking Functions
     /**
-     * Check if the Ghost-Boarder doesn't need to be updated anymore.
+     * Check if the Ghost-Boarder doesn't need to be updated anymore. (Updated From Ron)
      *
      * When all of the cells on the ghost-boarder have reached the maxGen-1 (at least),
      * we don't need to update it any more - we have enough information to calculate maxGen of all the relevant cells in the cellArray.
@@ -281,7 +281,7 @@ public class ThreadCell extends Thread {
         for (int i = 0; i < cellArraySize.getX(); i++) {
             for (int j = 0; j < cellArraySize.getY(); j++) {
 
-                if (!(cellArray[i][j].GetTopGenerationNum() >= maxGen-1))
+                if (!(cellArray[i][j].getCurrGen() >= maxGen-1))
                     return false;
 
                 if (j==0 && i != 0 && i != cellArraySize.getX()-1) {
