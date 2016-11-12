@@ -117,14 +117,14 @@ public class ThreadCell extends Thread {
     }
 
     /**
-     * Fill the real boolean board with this ThreadObj's cellArray
+     * Fill the real boolean board with this ThreadCell's cellArray Updated from Ron)
      * @param outField the full board that needs to be filled
      * @param Gen the generation of the board's cells
      */
     public void FillBoard(boolean[][] outField, int Gen) {
         for (int i = minPoint.getX(), m = start.getX(); i <= maxPoint.getX(); m++, i++) {
             for (int j = minPoint.getY(), n = start.getY(); j <= maxPoint.getY(); n++, j++) {
-                outField[i][j] = this.cellArray[m][n].GetGenIfExist(Gen);
+                outField[i][j] = this.cellArray[m][n].genState(Gen);
             }
         }
     }
