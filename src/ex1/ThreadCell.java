@@ -46,34 +46,44 @@ public class ThreadCell extends Thread {
         this.start = new Point(1, 1); //(0,0) is part of the neighbor's board
         this.end = new Point (cellArraySize.getX()-2,cellArraySize.getY()-2);
 
-        //Copy the relevant part to the cellArray (including neighbors)
-        for (int i = 0; i < this.cellArraySize.getX(); ++i)
-			for (int j = 0; j < this.cellArraySize.getY(); ++j) {
-				if (this.minPoint.getX() == 0) {
-					if (i == 0)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.maxPoint.getX() == initialBoard.length) {
-					if (i == this.cellArraySize.getX() - 1)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.minPoint.getY() == 0) {
-					if (j == 0)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.maxPoint.getY() == initialBoard[0].length) {
-					if (j == this.cellArraySize.getY() - 1)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				this.cellArray[i][j] =
-						new Cell(initialBoard[i + maxPoint.getX()][j + maxPoint.getY()],
-								false,
-								0);
-			}
+      //Copy the relevant part to the cellArray (including neighbors)
+        for (int i = 0; i < this.cellArraySize.getX(); i++) {
+            for (int j = 0; j < this.cellArraySize.getY(); j++) {
+            	
+            	/* if the thread works on the top row 
+            	 * the neighbors are dead units*/
+            	if(this.minPoint.getX()==0){ 
+            		if(i==0)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the bottom row
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.maxPoint.getX()==initialBoard.length){ 
+            		if(i==this.cellArraySize.getX()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the left most column
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.minPoint.getY()==0){
+            		if(j==0)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the right most column
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.maxPoint.getY()==initialBoard[0].length){ 
+            		if(j==this.cellArraySize.getY()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	this.cellArray[i][j] = new Cell(initialBoard[maxPoint.getX()+i][maxPoint.getY()+j],false,0); //assume that the unit was dead before gen 0
+            }
+        }
     }
 
     /**
