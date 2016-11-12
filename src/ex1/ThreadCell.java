@@ -208,11 +208,11 @@ public class ThreadCell extends Thread {
     }
 
     /**
-     * Unpacks the queue - empties the queue, and places all of its content on the Ghost-Boarder
+     * Unpacks the queue - empties the queue, and places all of its content on the Ghost-Boarder (Updated From Ron)
      * @return true if there was something to unpack (if the queue was not empty at the beginning). and false otherwise.
      */
     private boolean UnpackQueue() {
-        IndexedCell next = syncQueue.getNext();
+        Cell next = syncQueue.getNext();
         if (next == null)
             return false;
         while (next != null) {
