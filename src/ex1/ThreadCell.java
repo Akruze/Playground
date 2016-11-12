@@ -185,26 +185,26 @@ public class ThreadCell extends Thread {
     //region Queue Unpacking Functions
     /**
      * Places an Cell from the queue in the cellArray (Updated from Ron)
-     * @param cell    the cell to be placed
+     * @param c    the cell to be placed
      */
-    private void PlaceIndexedCell(Cell cell) {
+    private void placeCell(Cell c) {
         int toX = 0;
         int toY = 0;
 
-        if (cell.getPoint().getX()<this.minPoint.getX()) /*case the cell is in the most left column*/
+        if (c.getPoint().getX()<this.minPoint.getX()) /*case the cell is in the most left column*/
             toX = 0;
-        else if (cell.getPoint().getX()>this.maxPoint.getX()) /*case the cell is in the most right column*/
+        else if (c.getPoint().getX()>this.maxPoint.getX()) /*case the cell is in the most right column*/
             toX = this.cellArraySize.getX() - 1;
         else toX = this.maxPoint.getX()-this.minPoint.getX(); /*case the cell is in between*/
 
-        if (cell.getPoint().getY()<this.minPoint.getY()) /*case the cell is in the first row*/
+        if (c.getPoint().getY()<this.minPoint.getY()) /*case the cell is in the first row*/
             toY = 0;
-        else if (cell.getPoint().getY()>this.maxPoint.getY()) /*case the cell is in the bottom row*/
+        else if (c.getPoint().getY()>this.maxPoint.getY()) /*case the cell is in the bottom row*/
             toY = this.cellArraySize.getY() - 1;
         else toY = this.maxPoint.getY()-this.minPoint.getY(); /*case the cell is in between*/
 
 
-        cellArray[toX][toY] = new Cell(cell);
+        cellArray[toX][toY] = new Cell(c);
     }
 
     /**
@@ -216,7 +216,7 @@ public class ThreadCell extends Thread {
         if (next == null)
             return false;
         while (next != null) {
-            PlaceIndexedCell(next);
+            placeCell(next);
             next = syncQueue.getNext();
         }
         return true;
