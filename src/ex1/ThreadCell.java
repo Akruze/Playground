@@ -52,17 +52,17 @@ public class ThreadCell extends Thread {
         Point boardSize = new Point(initialField.length, initialField[0].length);
         for (int i = 0; i < this.cellArraySize.getX(); i++) {
             for (int j = 0; j < this.cellArraySize.getY(); j++) {
-            	if(this.maxPoint.getX()==0){ /*case the thread works on the top row and the ghost board needs to be filled with dead units*/
+            	if(this.minPoint.getX()==0){ /*case the thread works on the top row and the ghost board needs to be filled with dead units*/
             		if(i==0)
             			this.cellArray[i][j] = new Cell(false,false,0);
             		continue;
             	}
-            	if(this.minPoint.getX()==initialField.length){ /*case the thread works on the bottom row and the ghost board needs to be filled with dead units*/
+            	if(this.maxPoint.getX()==initialField.length){ /*case the thread works on the bottom row and the ghost board needs to be filled with dead units*/
             		if(i==this.cellArraySize.getX()-1)
             			this.cellArray[i][j] = new Cell(false,false,0);
             		continue;
             	}
-            	if(this.maxPoint.getY()==0){ /*case the thread works on the most left column and the ghost board needs to be filled with dead units*/
+            	if(this.minPoint.getY()==0){ /*case the thread works on the most left column and the ghost board needs to be filled with dead units*/
             		if(j==0)
             			this.cellArray[i][j] = new Cell(false,false,0);
             		continue;
