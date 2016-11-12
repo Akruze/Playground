@@ -270,7 +270,7 @@ public class ThreadCell extends Thread {
 
     //region Checking Functions
     /**
-     * Check if the Ghost-Boarder doesn't need to be updated anymore. (Updated From Ron)
+     * Check if the Ghost-Boarder doesn't need to be updated anymore. (Updated From Ron) 
      *
      * When all of the cells on the ghost-boarder have reached the maxGen-1 (at least),
      * we don't need to update it any more - we have enough information to calculate maxGen of all the relevant cells in the cellArray.
