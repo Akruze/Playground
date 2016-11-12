@@ -1,5 +1,9 @@
 package ex1;
 
+/***
+ * Used to indicate the state of a cell on the original board.
+ * Query is possible for the current state and one generation back
+ */
 public class Cell {
 	private boolean currAlive,prevAlive;
 	private int currGen;
@@ -16,6 +20,7 @@ public class Cell {
 		this.currAlive=c.currAlive;
 		this.prevAlive = c.prevAlive;
 		this.currGen = c.currGen;
+		this.location = new Point(c.location);
 	}
 	
 	public int getCurrGen(){
@@ -34,6 +39,12 @@ public class Cell {
 		return prevAlive;
 	}
 	
+	/***
+	 * Get the state of the cell (dead/alive) given a generation number.
+	 * @param gen: the generation number (current or previous only)
+	 * @return the state in the current gen or previous gen.
+	 * @return if the gen is invalid returns null
+	 */
 	@SuppressWarnings("null")
 	public boolean genState(int gen){
 		if (gen == currGen)
@@ -42,6 +53,10 @@ public class Cell {
 		return gen == currGen - 1 ? prevAlive : (Boolean) null;
 	}
 	
+	/***
+	 * Advance to the next gen, changing the state
+	 * @param state: state of the cell in the new gen
+	 */
 	public void Advance(boolean state){
 		this.currAlive=state;
 		this.prevAlive = currAlive;

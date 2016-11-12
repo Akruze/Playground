@@ -4,7 +4,6 @@ import java.util.ArrayList;
 /**
  * A producer-consumer queue
  * The size of the queue is not limited
- *
  * @param <T> the data type
  */
 public class SynchronizedQueue<T> {
