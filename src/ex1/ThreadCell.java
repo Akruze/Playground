@@ -250,7 +250,7 @@ public class ThreadCell extends Thread {
     }
 
     /**
-     * Updates the cell at (x,y) if possible
+     * Updates the cell at (x,y) if possible (Updated From Ron)
      * @param x    x position of the cell
      * @param y    y position of the cell
      * @return true if the cell was updated. or false otherwise
@@ -261,7 +261,7 @@ public class ThreadCell extends Thread {
         if (numNeighbors == null)
             return false;
 
-        cellArray[x][y].AddGen(numNeighbors==3 || (cellArray[x][y].GetTopState() && numNeighbors==2));
+        cellArray[x][y].Advance(numNeighbors==3 || (cellArray[x][y].currState() && numNeighbors==2));
         return true;
     }
     //endregion
