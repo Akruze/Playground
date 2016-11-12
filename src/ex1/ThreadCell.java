@@ -46,60 +46,74 @@ public class ThreadCell extends Thread {
         this.start = new Point(1, 1); //(0,0) is part of the neighbor's board
         this.end = new Point (cellArraySize.getX()-2,cellArraySize.getY()-2);
 
-        //Copy the relevant part to the cellArray (including neighbors)
-        for (int i = 0; i < this.cellArraySize.getX(); ++i)
-			for (int j = 0; j < this.cellArraySize.getY(); ++j) {
-				if (this.minPoint.getX() == 0) {
-					if (i == 0)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.maxPoint.getX() == initialBoard.length) {
-					if (i == this.cellArraySize.getX() - 1)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.minPoint.getY() == 0) {
-					if (j == 0)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				if (this.maxPoint.getY() == initialBoard[0].length) {
-					if (j == this.cellArraySize.getY() - 1)
-						this.cellArray[i][j] = new Cell(false, false, 0);
-					continue;
-				}
-				this.cellArray[i][j] =
-						new Cell(initialBoard[i + maxPoint.getX()][j + maxPoint.getY()],
-								false,
-								0);
-			}
+      //Copy the relevant part to the cellArray (including neighbors)
+        for (int i = 0; i < this.cellArraySize.getX(); i++) {
+            for (int j = 0; j < this.cellArraySize.getY(); j++) {
+            	
+            	/* if the thread works on the top row 
+            	 * the neighbors are dead units*/
+            	if(this.minPoint.getX()==0){ 
+            		if(i==0)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the bottom row
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.maxPoint.getX()==initialBoard.length){ 
+            		if(i==this.cellArraySize.getX()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the left most column
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.minPoint.getY()==0){
+            		if(j==0)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	
+            	/* if the thread works on the right most column
+            	 * the neighboring cells need to be filled with dead units*/
+            	if(this.maxPoint.getY()==initialBoard[0].length){ 
+            		if(j==this.cellArraySize.getY()-1)
+            			this.cellArray[i][j] = new Cell(false,false,0);
+            		continue;
+            	}
+            	this.cellArray[i][j] = new Cell(initialBoard[maxPoint.getX()+i][maxPoint.getY()+j],false,0); //assume that the unit was dead before gen 0
+            }
+        }
     }
 
-    /**
-     * The Threads run() function
-     */
+    
     @Override
     public void run() {
-        boolean reachedMaxGen = false;  // Will determine whether all of the relevant cells have reached maxGen
-        while (!reachedMaxGen) {    // If the relevant cells haven't reached the maxGen, continue the calculation
+    	//Flag to determine whether we've reached max gen
+        boolean reachedMaxGen = false;
+        while (!reachedMaxGen) {
             reachedMaxGen = true;
 
             for (int i = start.getX(); i <= end.getX(); i++) {
                 for (int j = start.getY(); j <= end.getY(); j++) {
                     if (cellArray[i][j].getCurrGen() != maxGen){
-                    	if (UpdateCellIfPossible(i, j))                 // update the cell if possible and needed.
+                    	// update the cell if possible and needed.
+                    	if (UpdateCellIfPossible(i, j))
                     		SendCellIfNeeded(i, j);
-                    	if (cellArray[i][j].getCurrGen() < maxGen)     // if this cell still didn't reach the maxGen
+                    	// if this cell still didn't reach the maxGen
+                    	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen)
                             reachedMaxGen = false;
                     }
                 }
-            } /************************************************finished until here except for functions*/
+            }
 
-            if (!GhostBoarderFinished()) {  // check if the ghost-boarder part has finished to be filled
-                while (!UnpackQueue()) {}   // unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
-                                                // if there was nothing to unpack, there is noting new to calculate
-                                                // also, we know that more stuff needs to be unpacked because GhostBoarderFinished() was false
+            // check if the neighbors' parts have finished
+            if (!GhostBoarderFinished()) {
+            	/* unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
+                * if there was nothing to unpack, there is noting new to calculate
+                * also, we know that more stuff needs to be unpacked because GhostBoarderFinished() was false
+                */
+            	while (!UnpackQueue()) {}
             }
         }
     }
