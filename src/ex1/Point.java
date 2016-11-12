@@ -1,5 +1,8 @@
 package ex1;
 
+/***
+ * Used to indicate a position in a 2-D array
+ */
 public class Point {
 	private int x,y;
 	
