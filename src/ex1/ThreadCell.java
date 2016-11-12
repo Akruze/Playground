@@ -86,30 +86,34 @@ public class ThreadCell extends Thread {
         }
     }
 
-    /**
-     * The Threads run() function
-     */
+    
     @Override
     public void run() {
-        boolean reachedMaxGen = false;  // Will determine whether all of the relevant cells have reached maxGen
-        while (!reachedMaxGen) {    // If the relevant cells haven't reached the maxGen, continue the calculation
+    	//Flag to determine whether we've reached max gen
+        boolean reachedMaxGen = false;
+        while (!reachedMaxGen) {
             reachedMaxGen = true;
 
             for (int i = start.getX(); i <= end.getX(); i++) {
                 for (int j = start.getY(); j <= end.getY(); j++) {
                     if (cellArray[i][j].getCurrGen() != maxGen){
-                    	if (UpdateCellIfPossible(i, j))                 // update the cell if possible and needed.
+                    	// update the cell if possible and needed.
+                    	if (UpdateCellIfPossible(i, j))
                     		SendCellIfNeeded(i, j);
-                    	if (cellArray[i][j].getCurrGen() < maxGen)     // if this cell still didn't reach the maxGen
+                    	// if this cell still didn't reach the maxGen
+                    	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen)
                             reachedMaxGen = false;
                     }
                 }
-            } /************************************************finished until here except for functions*/
+            }
 
-            if (!GhostBoarderFinished()) {  // check if the ghost-boarder part has finished to be filled
-                while (!UnpackQueue()) {}   // unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
-                                                // if there was nothing to unpack, there is noting new to calculate
-                                                // also, we know that more stuff needs to be unpacked because GhostBoarderFinished() was false
+            // check if the neighbors' parts have finished
+            if (!GhostBoarderFinished()) {
+            	/* unpack the queue. if the queue was empty to begin with, than do a busy-wait until there is something in it.
+                * if there was nothing to unpack, there is noting new to calculate
+                * also, we know that more stuff needs to be unpacked because GhostBoarderFinished() was false
+                */
+            	while (!UnpackQueue()) {}
             }
         }
     }
