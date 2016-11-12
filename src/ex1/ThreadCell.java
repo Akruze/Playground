@@ -108,13 +108,11 @@ public class ThreadCell extends Thread {
     }
 
     /**
-     * Add a Cell to the Ghost-Boarder of this neighboring ThreadObj
-     * @param cell the cell you send
-     * @param fromPoint the cell's location in your cell array
-     * @param relativeThreadPoint the relative vector of your thread
+     * Add a Cell to the Ghost-Boarder of this neighboring ThreadCell (Updated from Ron)
+     * @param cell the cell you send - the cell itself already contain it's own point the real array
      */
-    public void AddToQueue(Cell cell, Point fromPoint, Point relativeThreadPoint) {
-        syncQueue.enqueue(new IndexedCell(cell, fromPoint, relativeThreadPoint));
+    public void AddToQueue(Cell cell) {
+        syncQueue.enqueue(new Cell(cell));
     }
 
     /**
