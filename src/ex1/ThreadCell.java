@@ -16,6 +16,9 @@ public class ThreadCell extends Thread {
 	private Point maxPoint;
 
 	private int maxGen;
+	
+	//Original border size
+	private Point initSize;
 
 	// A queue that holds the cells from the neighboring threads from the thread array.
 	private SynchronizedQueue<Cell> syncQueue;
@@ -45,7 +48,7 @@ public class ThreadCell extends Thread {
         this.cellArray = new Cell[this.cellArraySize.getX()][this.cellArraySize.getY()];
         this.start = new Point(1, 1); //(0,0) is part of the neighbor's board
         this.end = new Point (cellArraySize.getX()-2,cellArraySize.getY()-2);
-
+        this.initSize = new Point (initialBoard.length, initialBoard[0].length);
       //Copy the relevant part to the cellArray (including neighbors)
         for (int i = 0; i < this.cellArraySize.getX(); i++) {
             for (int j = 0; j < this.cellArraySize.getY(); j++) {
@@ -99,7 +102,7 @@ public class ThreadCell extends Thread {
                     if (cellArray[i][j].getCurrGen() != maxGen){
                     	// update the cell if possible and needed.
                     	if (UpdateCellIfPossible(i, j))
-                    		SendCellIfNeeded(i, j);
+                    		SendCellIfNeeded(cellArray[i][j]);
                     	// if this cell still didn't reach the maxGen
                     	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen)
                             reachedMaxGen = false;
@@ -138,9 +141,7 @@ public class ThreadCell extends Thread {
             }
         }
     }
-    //endregion
 
-    //region Send Calculated Cell To Other Threads
     /**
      * Send the cell at (x,y) to the neighboring cells,
      * only if (x,y) is on the inner boarder
@@ -148,53 +149,74 @@ public class ThreadCell extends Thread {
      * @param x x position
      * @param y y position
      */
-    private void SendCellIfNeeded(int x, int y) {
-        Cell cell = cellArray[x][y];
-        if (!(x==start.getX() || x==end.getX() || y==start.getY() || y==end.getY())) //if not on boarder, than exit
-            return;
-
-        ArrayList<Point> relativePointsArray = new ArrayList<Point>();
-
-        //region Add relative vectors to the relativePointsArray based on (x,y)
-        if (x == start.getX()) {
-            relativePointsArray.add(new Point(-1, 0));
+    private void SendCellIfNeeded(Cell c) {
+        if(!onBorder(c)) return;
+    	
+        if(c.getPoint().getX()== maxPoint.getX()){ // send down
+        	if(c.getPoint().getX() < initSize.getX()){
+        		threadArrayRef[threadLocation.getX()][threadLocation.getY()+1].AddToQueue(new Cell(c));	
+        	}
         }
-        if (x == end.getX()) {
-            relativePointsArray.add(new Point(1, 0));
+        
+        if(c.getPoint().getX()==minPoint.getX()){//send up
+        	if(c.getPoint().getX()>0){
+        		threadArrayRef[threadLocation.getX()][threadLocation.getY()-1].AddToQueue(new Cell(c));
+        	}
         }
-
-        if (y == start.getY()) {
-            relativePointsArray.add(new Point(0, -1));
+        
+        if(c.getPoint().getY()==maxPoint.getY()){ //send left
+        	if(c.getPoint().getY()<initSize.getY()){
+        		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()].AddToQueue(new Cell(c));
+        	}
         }
-        if (y == end.getY()) {
-            relativePointsArray.add(new Point(0, 1));
+        
+        if(c.getPoint().getY()==minPoint.getY()){  //send right
+        	if(c.getPoint().getY()>0){
+        		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()].AddToQueue(new Cell(c));
+        	}
         }
-
-        if (x == start.getX() && y == start.getY()) {
-            relativePointsArray.add(new Point(-1, -1));
+        
+        if(c.getPoint()==maxPoint){ //send bottom right
+        	if((c.getPoint().getY()<initSize.getY())&&(c.getPoint().getX() < initSize.getX())){
+        		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()+1].AddToQueue(new Cell(c));
+        	}
         }
-        if (x == start.getX() && y == end.getY()) {
-            relativePointsArray.add(new Point(-1, 1));
+        
+        if(c.getPoint().getX()==maxPoint.getX()&& c.getPoint().getY()==minPoint.getY()){ // send bottom left
+        	if(c.getPoint().getX() < initSize.getX()&&c.getPoint().getY()>0){
+        		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()+1].AddToQueue(new Cell(c));
+        	}
         }
-        if (x == end.getX() && y == start.getY()) {
-            relativePointsArray.add(new Point(1, -1));
+        
+        if(c.getPoint()==maxPoint){ //send upper right 
+        	if((c.getPoint().getY() > 0)&&(c.getPoint().getX() < initSize.getX())){
+        		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()-1].AddToQueue(new Cell(c));
+        	}
         }
-        if (x == end.getX() && y == end.getY()) {
-            relativePointsArray.add(new Point(1, 1));
+        
+        if(c.getPoint().getX()==maxPoint.getX()&& c.getPoint().getY()==minPoint.getY()){ // send upper left
+        	if(c.getPoint().getX() > 0 && c.getPoint().getY() > 0 ){
+        		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()-1].AddToQueue(new Cell(c));
+        	}
         }
-        //endregion
-
-        //region Go over the relativePointsArray and send the cell to the relevant ThreadObjs in the threadArray (uses threadArrayRef)
-        for (Point p : relativePointsArray) {
-            Point dest = Point.Add(Point.Add(p, this.threadLocation), this.threadArraySize);
-            dest = Point.Mod(dest, this.threadArraySize);
-            threadArrayRef[dest.getX()][dest.getY()].AddToQueue(new Cell(cell), new Point(x, y), p);
-        }
-        //endregion
     }
-    //endregion
+        
+    private boolean onBorder(Cell c) {
+		int cellPointX = c.getPoint().getX();
+		int cellPointY = c.getPoint().getY();
+		boolean betweenX = cellPointX > minPoint.getX() && cellPointX < maxPoint.getX();
+		boolean betweenY = cellPointY > minPoint.getY() && cellPointY < maxPoint.getY();
+		if (betweenX && betweenY)
+			return false;
+		if (betweenX && (cellPointY == 0 || cellPointY == initSize.getY() - 1))
+			return false;
+		if (betweenY && (cellPointX == 0 || cellPointX == initSize.getX() - 1))
+			return false;
+		return true;
+	}
 
-    //region Queue Unpacking Functions
+
+
     /**
      * Places an Cell from the queue in the cellArray (Updated from Ron)
      * @param c    the cell to be placed
@@ -233,9 +255,7 @@ public class ThreadCell extends Thread {
         }
         return true;
     }
-    //endregion
 
-    //region Update Cell Functions
 
     /**
      * Calculates the number of live neighbors (if possible) (Updated From Ron)
@@ -278,9 +298,7 @@ public class ThreadCell extends Thread {
         cellArray[x][y].Advance(numNeighbors==3 || (cellArray[x][y].currState() && numNeighbors==2));
         return true;
     }
-    //endregion
 
-    //region Checking Functions
     /**
      * Check if the Ghost-Boarder doesn't need to be updated anymore. (Updated From Ron) 
      *
@@ -303,5 +321,4 @@ public class ThreadCell extends Thread {
         }
         return true;
     }
-    //endregion
 }
