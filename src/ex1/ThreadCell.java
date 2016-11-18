@@ -84,7 +84,8 @@ public class ThreadCell extends Thread {
             			this.cellArray[i][j] = new Cell(false,false,0);
             		continue;
             	}
-            	this.cellArray[i][j] = new Cell(initialBoard[maxPoint.getX()+i][maxPoint.getY()+j],false,0); //assume that the unit was dead before gen 0
+            	//assume that the unit was dead before gen 0
+            	this.cellArray[i][j] = new Cell(initialBoard[minPoint.getX()+i][minPoint.getY()+j],false,0);
             }
         }
     }
