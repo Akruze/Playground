@@ -80,9 +80,6 @@ public class ThreadCell extends Thread {
             		}
             	}
             	
-//            	if(this.getName().equals("Thread-1")){//TODO
-//            		System.out.println("SDGSG");
-//            	}
             	/* if the thread works on the right most column
             	 * the neighboring cells need to be filled with dead units*/
             	if(this.maxPoint.getY()==initialBoard[0].length-1){ 
@@ -92,7 +89,7 @@ public class ThreadCell extends Thread {
             		}
             	}
             	//assume that the unit was dead before gen 0
-            	System.out.println(this.getName() +": " + i + ", " +j +" -- "+" "+minPoint+" xLen: "+initialBoard.length+" yLen: "+initialBoard[0].length);
+            	//TODO System.out.println(this.getName() +": " + i + ", " +j +" -- "+" "+minPoint+" xLen: "+initialBoard.length+" yLen: "+initialBoard[0].length);
             	this.cellArray[i][j] = new Cell(initialBoard[minPoint.getX()+i-1][minPoint.getY()+j-1],false,0);
             	this.cellArray[i][j].setPoint(new Point(minPoint.getX()+i-1, minPoint.getY()+j-1));
             }
@@ -136,6 +133,8 @@ public class ThreadCell extends Thread {
      * @param cell the cell you send - the cell itself already contain it's own point the real array
      */
     public void AddToQueue(Cell cell) {
+    	//TODO
+    	//System.out.print(this.getName()+" "+cell.getPoint()+" ");
         syncQueue.enqueue(new Cell(cell));
     }
 
@@ -162,26 +161,26 @@ public class ThreadCell extends Thread {
     private void SendCellIfNeeded(Cell c) {
         if(!onBorder(c)) return;
     	
-        if(c.getPoint().getX()== maxPoint.getX()){ // send down
-        	if(c.getPoint().getX() < initSize.getX()){
+        if(c.getPoint().getY()== maxPoint.getY()){ // send down
+        	if(c.getPoint().getY() < initSize.getY()-1){
         		threadArrayRef[threadLocation.getX()][threadLocation.getY()+1].AddToQueue(new Cell(c));	
         	}
         }
         
-        if(c.getPoint().getX()==minPoint.getX()){//send up
-        	if(c.getPoint().getX()>0){
+        if(c.getPoint().getY()==minPoint.getY()){//send up
+        	if(c.getPoint().getY()>0){
         		threadArrayRef[threadLocation.getX()][threadLocation.getY()-1].AddToQueue(new Cell(c));
         	}
         }
         
-        if(c.getPoint().getY()==maxPoint.getY()){ //send left
-        	if(c.getPoint().getY()<initSize.getY()){
+        if(c.getPoint().getX()==minPoint.getX()){ //send left
+        	if(c.getPoint().getX()>0){
         		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()].AddToQueue(new Cell(c));
         	}
         }
         
-        if(c.getPoint().getY()==minPoint.getY()){  //send right
-        	if(c.getPoint().getY()>0){
+        if(c.getPoint().getX()==maxPoint.getX()){  //send right
+        	if(c.getPoint().getX() < initSize.getX()-1){
         		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()].AddToQueue(new Cell(c));
         	}
         }
@@ -193,18 +192,18 @@ public class ThreadCell extends Thread {
         }
         
         if(c.getPoint().getX()==maxPoint.getX()&& c.getPoint().getY()==minPoint.getY()){ // send bottom left
-        	if(c.getPoint().getX() < initSize.getX()&&c.getPoint().getY()>0){
+        	if(c.getPoint().getX() > 0 && c.getPoint().getY() < initSize.getY() - 1){
         		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()+1].AddToQueue(new Cell(c));
         	}
         }
         
-        if(c.getPoint()==maxPoint){ //send upper right 
-        	if((c.getPoint().getY() > 0)&&(c.getPoint().getX() < initSize.getX())){
+        if(c.getPoint().getX() == maxPoint.getX() && c.getPoint().getY() == minPoint.getY()){ //send upper right 
+        	if((c.getPoint().getY() > 0)&&(c.getPoint().getX() < initSize.getX() - 1)){
         		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()-1].AddToQueue(new Cell(c));
         	}
         }
         
-        if(c.getPoint().getX()==maxPoint.getX()&& c.getPoint().getY()==minPoint.getY()){ // send upper left
+        if(c.getPoint() ==minPoint){ // send upper left
         	if(c.getPoint().getX() > 0 && c.getPoint().getY() > 0 ){
         		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()-1].AddToQueue(new Cell(c));
         	}

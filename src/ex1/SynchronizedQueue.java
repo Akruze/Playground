@@ -25,6 +25,8 @@ public class SynchronizedQueue<T> {
      * @param e    the element to add
      */
     public synchronized void enqueue(T e) {
-		cells.add(cells.size() - 1, e);
+    	//TODO
+    	//System.out.println("to insert at: "+ (cells.size()));
+		cells.add(cells.size() , e);
 	}
 }
