@@ -56,36 +56,45 @@ public class ThreadCell extends Thread {
             	/* if the thread works on the top row 
             	 * the neighbors are dead units*/
             	if(this.minPoint.getX()==0){ 
-            		if(i==0)
+            		if(i==0){
             			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
+            			continue;
+            		}
             	}
             	
             	/* if the thread works on the bottom row
             	 * the neighboring cells need to be filled with dead units*/
-            	if(this.maxPoint.getX()==initialBoard.length){ 
-            		if(i==this.cellArraySize.getX()-1)
+            	if(this.maxPoint.getX()==initialBoard.length-1){ 
+            		if(i==this.cellArraySize.getX()-1){
             			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
+            			continue;
+            		}
             	}
             	
             	/* if the thread works on the left most column
             	 * the neighboring cells need to be filled with dead units*/
             	if(this.minPoint.getY()==0){
-            		if(j==0)
+            		if(j==0){
             			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
+            			continue;
+            		}
             	}
             	
+//            	if(this.getName().equals("Thread-1")){//TODO
+//            		System.out.println("SDGSG");
+//            	}
             	/* if the thread works on the right most column
             	 * the neighboring cells need to be filled with dead units*/
-            	if(this.maxPoint.getY()==initialBoard[0].length){ 
-            		if(j==this.cellArraySize.getY()-1)
+            	if(this.maxPoint.getY()==initialBoard[0].length-1){ 
+            		if(j==this.cellArraySize.getY()-1){
             			this.cellArray[i][j] = new Cell(false,false,0);
-            		continue;
+            			continue;
+            		}
             	}
             	//assume that the unit was dead before gen 0
-            	this.cellArray[i][j] = new Cell(initialBoard[minPoint.getX()+i][minPoint.getY()+j],false,0);
+            	System.out.println(this.getName() +": " + i + ", " +j +" -- "+" "+minPoint+" xLen: "+initialBoard.length+" yLen: "+initialBoard[0].length);
+            	this.cellArray[i][j] = new Cell(initialBoard[minPoint.getX()+i-1][minPoint.getY()+j-1],false,0);
+            	this.cellArray[i][j].setPoint(new Point(minPoint.getX()+i-1, minPoint.getY()+j-1));
             }
         }
     }
