@@ -18,8 +18,8 @@ public class Point {
 	
 	public int getX(){return x;}
 	public int getY(){return y;}
-	public void setX(int x, Point p){p.x=x;}
-	public void sety(int y, Point p){p.y=y;}
+	public void setX(int x){this.x=x;}
+	public void sety(int y){this.y=y;}
 	@Override
 	public String toString(){
 		return "("+x+","+y+")";

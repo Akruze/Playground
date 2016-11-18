@@ -11,16 +11,18 @@ public class ParallelGameOfLife implements GameOfLife {
 		ThreadCell[][] threadArray = new ThreadCell[threadArraySize.getX()][threadArraySize.getY()];
 
 		Point boardSize = new Point(initalField.length, initalField[0].length);
-		Point cellsPerThread = Point.Div(boardSize, threadArraySize);
-
+		//Point cellsPerThread = Point.Div(boardSize, threadArraySize);
+		int horizotalCellPerThread = initalField.length/hSplit;
+		int verticalCellPerThread = initalField[0].length/vSplit;
+		
 		for (int i = 0; i < threadArraySize.getX(); i++) {
 			for (int j = 0; j < threadArraySize.getY(); j++) {
-				Point start = Point.Mul(new Point(i, j), cellsPerThread);
-				Point end = Point.Add(Point.Add(start, cellsPerThread), -1);
+				Point start = new Point(i*horizotalCellPerThread,j*verticalCellPerThread);
+				Point end = new Point ((i+1)*horizotalCellPerThread-1,(j+1)*verticalCellPerThread-1);
 				if (i == threadArraySize.getX()-1)
-					end = new Point(boardSize.getX() - 1, end.getY());
+					end.setX(boardSize.getX() - 1);
 				if (j == threadArraySize.getY()-1)
-					end = new Point(end.getX(), boardSize.getY() - 1);
+					end.sety(boardSize.getY() - 1);
 
 				threadArray[i][j] = new ThreadCell(initalField, threadArray, generations,
 						threadArraySize, new Point(i, j), start, end);
