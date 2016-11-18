@@ -29,4 +29,6 @@ public class SynchronizedQueue<T> {
     	//System.out.println("to insert at: "+ (cells.size()));
 		cells.add(cells.size() , e);
 	}
+    
+    public synchronized boolean isEmpty(){return cells.isEmpty();}
 }

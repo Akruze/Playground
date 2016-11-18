@@ -88,9 +88,10 @@ public class ThreadCell extends Thread {
             			continue;
             		}
             	}
-            	//assume that the unit was dead before gen 0
+            	
             	//TODO System.out.println(this.getName() +": " + i + ", " +j +" -- "+" "+minPoint+" xLen: "+initialBoard.length+" yLen: "+initialBoard[0].length);
-            	this.cellArray[i][j] = new Cell(initialBoard[minPoint.getX()+i-1][minPoint.getY()+j-1],false,0);
+            	boolean generation = initialBoard[minPoint.getX()+i-1][minPoint.getY()+j-1];
+            	this.cellArray[i][j] = new Cell(generation,generation,0);
             	this.cellArray[i][j].setPoint(new Point(minPoint.getX()+i-1, minPoint.getY()+j-1));
             }
         }
@@ -99,6 +100,7 @@ public class ThreadCell extends Thread {
     
     @Override
     public void run() {
+    	System.out.println("max gen " + maxGen);
     	//Flag to determine whether we've reached max gen
         boolean reachedMaxGen = false;
         while (!reachedMaxGen) {
@@ -106,13 +108,16 @@ public class ThreadCell extends Thread {
 
             for (int i = start.getX(); i <= end.getX(); i++) {
                 for (int j = start.getY(); j <= end.getY(); j++) {
+                	//TODO
+                	System.out.println(i+", "+j+" -- "+cellArray[i][j].getCurrGen());
                     if (cellArray[i][j].getCurrGen() != maxGen){
                     	// update the cell if possible and needed.
                     	if (UpdateCellIfPossible(i, j))
                     		SendCellIfNeeded(cellArray[i][j]);
                     	// if this cell still didn't reach the maxGen
-                    	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen)
-                            reachedMaxGen = false;
+                    	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen){
+                    		reachedMaxGen = false;
+                    	}
                     }
                 }
             }
@@ -191,7 +196,7 @@ public class ThreadCell extends Thread {
         	}
         }
         
-        if(c.getPoint().getX()==maxPoint.getX()&& c.getPoint().getY()==minPoint.getY()){ // send bottom left
+        if(c.getPoint().getX()==minPoint.getX()&& c.getPoint().getY()==maxPoint.getY()){ // send bottom left
         	if(c.getPoint().getX() > 0 && c.getPoint().getY() < initSize.getY() - 1){
         		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()+1].AddToQueue(new Cell(c));
         	}
@@ -255,6 +260,7 @@ public class ThreadCell extends Thread {
      * @return true if there was something to unpack (if the queue was not empty at the beginning). and false otherwise.
      */
     private boolean UnpackQueue() {
+    	if(syncQueue.isEmpty()) return true;
         Cell next = syncQueue.getNext();
         if (next == null)
             return false;
@@ -273,8 +279,10 @@ public class ThreadCell extends Thread {
      * @return the number of live neighbors, or null if can't calculate (the neighbors don't have the right generation calculated)
      */
     private Integer NumOfLiveNeighbors(int x, int y) {
+    	if(x==1 && y==1)
+    		System.out.println("");
         int genToCalcMinusOne = cellArray[x][y].getCurrGen();
-        int count = 0;
+        int livingNeighbors = 0;
 
         for (int i = x-1; i <= x+1; i++) {
             for (int j = y-1; j <= y+1; j++) {
@@ -285,11 +293,11 @@ public class ThreadCell extends Thread {
                 if (b == null)
                     return null;
                 if (b)
-                    count++;
+                    livingNeighbors++;
             }
         }
 
-        return count;
+        return livingNeighbors;
     }
 
     /**
@@ -317,15 +325,14 @@ public class ThreadCell extends Thread {
      * @return true if there is no need to update the ghost-boarder
      */
     private boolean GhostBoarderFinished() {
-        for (int i = 0; i < cellArraySize.getX(); i++) {
+        for (int i = 0; i < cellArraySize.getX(); ++i) {
             for (int j = 0; j < cellArraySize.getY(); j++) {
 
                 if (!(cellArray[i][j].getCurrGen() >= maxGen-1))
                     return false;
 
-                if (j==0 && i != 0 && i != cellArraySize.getX()-1) {
-                    j = cellArraySize.getY() - 2;
-                }
+                if (j==0 && i != 0 && i != cellArraySize.getX()-1)
+					j = cellArraySize.getY() - 2;
             }
         }
         return true;

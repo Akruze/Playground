@@ -58,8 +58,8 @@ public class Cell {
 	 * @param state: state of the cell in the new gen
 	 */
 	public void Advance(boolean state){
-		this.currAlive=state;
 		this.prevAlive = currAlive;
+		this.currAlive=state;
 		++this.currGen;
 	}
 

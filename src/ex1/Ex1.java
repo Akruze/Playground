@@ -56,6 +56,15 @@ public class Ex1 {
 		
 		boolean[][][] resultParallel=pGol.invoke(field,hSplit,vSplit, nGenerations);
 		
+		try{
+			printArray(resultParallel[0],"outputA.txt");
+			printArray(resultParallel[1],"outputB.txt");
+		}catch(Exception e){
+			System.err.println("Failed to write the output to file");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
 		if (compareArrays(resultParallel[0],resultSerial[0]) && compareArrays(resultParallel[1],resultSerial[1])){
 			System.out.println("Success!");
 		}else{
