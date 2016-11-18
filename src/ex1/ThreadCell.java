@@ -112,8 +112,10 @@ public class ThreadCell extends Thread {
                 	//System.out.println(i+", "+j+" -- "+cellArray[i][j].getCurrGen());
                     if (cellArray[i][j].getCurrGen() != maxGen){
                     	// update the cell if possible and needed.
-                    	if (UpdateCellIfPossible(i, j))
+                    	if (UpdateCellIfPossible(i, j)){
                     		SendCellIfNeeded(cellArray[i][j]);
+                    	}
+                    		
                     	// if this cell still didn't reach the maxGen
                     	if (reachedMaxGen && cellArray[i][j].getCurrGen() < maxGen){
                     		reachedMaxGen = false;
@@ -165,7 +167,7 @@ public class ThreadCell extends Thread {
      */
     private void SendCellIfNeeded(Cell c) {
         if(!onBorder(c)) return;
-    	
+        
         if(c.getPoint().getY()== maxPoint.getY()){ // send down
         	if(c.getPoint().getY() < initSize.getY()-1){
         		threadArrayRef[threadLocation.getX()][threadLocation.getY()+1].AddToQueue(new Cell(c));	
@@ -243,14 +245,13 @@ public class ThreadCell extends Thread {
             toX = 0;
         else if (c.getPoint().getX()>this.maxPoint.getX()) /*case the cell is in the most right column*/
             toX = this.cellArraySize.getX() - 1;
-        else toX = this.maxPoint.getX()-this.minPoint.getX(); /*case the cell is in between*/
+        else toX = this.maxPoint.getX()-c.getPoint().getX()+2; /*case the cell is in between*/
 
         if (c.getPoint().getY()<this.minPoint.getY()) /*case the cell is in the first row*/
             toY = 0;
         else if (c.getPoint().getY()>this.maxPoint.getY()) /*case the cell is in the bottom row*/
             toY = this.cellArraySize.getY() - 1;
-        else toY = this.maxPoint.getY()-this.minPoint.getY(); /*case the cell is in between*/
-
+        else toY = this.maxPoint.getY()-c.getPoint().getY()+2; /*case the cell is in between*/
 
         cellArray[toX][toY] = new Cell(c);
     }
@@ -290,8 +291,11 @@ public class ThreadCell extends Thread {
                 
                 Boolean b = cellArray[i][j].genState(genToCalcMinusOne);
 
-				if (b == null)
-	               return null;
+				if (b == null){
+					//System.out.println(cellArray[x][y].getPoint()+" "+cellArray[x][y].getCurrGen()+" "+cellArray[i][j].getPoint()+" "+minPoint+" "+maxPoint);
+					return null;
+				}
+	               
 	            if (b)
 	               livingNeighbors++;
 				
@@ -313,7 +317,7 @@ public class ThreadCell extends Thread {
 
         if (numNeighbors == null)
             return false;
-
+        
         cellArray[x][y].Advance(numNeighbors==3 || (cellArray[x][y].currState() && numNeighbors==2));
         return true;
     }
