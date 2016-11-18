@@ -100,7 +100,7 @@ public class ThreadCell extends Thread {
     
     @Override
     public void run() {
-    	System.out.println("max gen " + maxGen);
+    	//System.out.println("max gen " + maxGen);
     	//Flag to determine whether we've reached max gen
         boolean reachedMaxGen = false;
         while (!reachedMaxGen) {
@@ -109,7 +109,7 @@ public class ThreadCell extends Thread {
             for (int i = start.getX(); i <= end.getX(); i++) {
                 for (int j = start.getY(); j <= end.getY(); j++) {
                 	//TODO
-                	System.out.println(i+", "+j+" -- "+cellArray[i][j].getCurrGen());
+                	//System.out.println(i+", "+j+" -- "+cellArray[i][j].getCurrGen());
                     if (cellArray[i][j].getCurrGen() != maxGen){
                     	// update the cell if possible and needed.
                     	if (UpdateCellIfPossible(i, j))
@@ -279,21 +279,23 @@ public class ThreadCell extends Thread {
      * @return the number of live neighbors, or null if can't calculate (the neighbors don't have the right generation calculated)
      */
     private Integer NumOfLiveNeighbors(int x, int y) {
-    	if(x==1 && y==1)
-    		System.out.println("");
         int genToCalcMinusOne = cellArray[x][y].getCurrGen();
+        //genToCalcMinusOne = genToCalcMinusOne > 0 ? genToCalcMinusOne - 1 : genToCalcMinusOne;
         int livingNeighbors = 0;
 
         for (int i = x-1; i <= x+1; i++) {
             for (int j = y-1; j <= y+1; j++) {
-                if (i==x && j==y)
-                    continue;
-
+            	if(cellArray[i][j].getPoint() == null) continue;
+                if (i==x && j==y) continue;
+                
                 Boolean b = cellArray[i][j].genState(genToCalcMinusOne);
-                if (b == null)
-                    return null;
-                if (b)
-                    livingNeighbors++;
+
+				if (b == null)
+	               return null;
+	            if (b)
+	               livingNeighbors++;
+				
+                
             }
         }
 

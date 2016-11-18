@@ -45,12 +45,11 @@ public class Cell {
 	 * @return the state in the current gen or previous gen.
 	 * @return if the gen is invalid returns null
 	 */
-	@SuppressWarnings("null")
-	public boolean genState(int gen){
+	public Boolean genState(int gen){
 		if (gen == currGen)
 			return currAlive;
 		//In case we want to get its current state on gen number 0 - return null
-		return gen == currGen - 1 ? prevAlive : (Boolean) null;
+		return gen == currGen - 1 ? prevAlive : null;
 	}
 	
 	/***
