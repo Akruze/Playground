@@ -6,12 +6,12 @@ public class ParallelGameOfLife implements GameOfLife {
 	public boolean[][][] invoke(boolean[][] initalField, int hSplit, int vSplit,
 			int generations) {
 
-		//region Init threadArray
-		Point threadArraySize = new Point(vSplit, hSplit);//TODO: check order of v and h
+		//Init array of threads
+		Point threadArraySize = new Point(vSplit, hSplit);
 		ThreadCell[][] threadArray = new ThreadCell[threadArraySize.getX()][threadArraySize.getY()];
 
 		Point boardSize = new Point(initalField.length, initalField[0].length);
-		//Point cellsPerThread = Point.Div(boardSize, threadArraySize);
+		
 		int horizotalCellPerThread = initalField.length/hSplit;
 		int verticalCellPerThread = initalField[0].length/vSplit;
 		
@@ -28,17 +28,15 @@ public class ParallelGameOfLife implements GameOfLife {
 						threadArraySize, new Point(i, j), start, end);
 			}
 		}
-		//endregion
 
-		//region Start the Threads
+		//Start the Threads
 		for (int i = 0; i < threadArraySize.getX(); i++) {
 			for (int j = 0; j < threadArraySize.getY(); j++) {
 				threadArray[i][j].start();
 			}
 		}
-		//endregion
 
-		//region Join the Threads
+		//Join the Threads
 		for (int i = 0; i < threadArraySize.getX(); i++) {
 			for (int j = 0; j < threadArraySize.getY(); j++) {
 				try {
@@ -48,18 +46,17 @@ public class ParallelGameOfLife implements GameOfLife {
 				}
 			}
 		}
-		//endregion
 
-		//region Build Result Board
+
+		//Build Result Board
 		boolean[][][] outBoard = new boolean[2][boardSize.getX()][boardSize.getY()];
 
 		for (int i = 0; i < threadArraySize.getX(); i++) {
 			for (int j = 0; j < threadArraySize.getY(); j++) {
-				threadArray[i][j].FillBoard(outBoard[0], generations-1);
-				threadArray[i][j].FillBoard(outBoard[1], generations);
+				threadArray[i][j].fillBoard(outBoard[0], generations-1);
+				threadArray[i][j].fillBoard(outBoard[1], generations);
 			}
 		}
-		//endregion
 
 		return outBoard;
 	}

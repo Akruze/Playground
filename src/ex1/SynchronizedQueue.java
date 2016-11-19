@@ -24,10 +24,7 @@ public class SynchronizedQueue<T> {
      * Adds an element to the end of the queue
      * @param e    the element to add
      */
-    public synchronized void enqueue(T e) {
-    	//TODO
-    	//System.out.println("to insert at: "+ (cells.size()));
-		cells.add(cells.size() , e);
+    public synchronized void enqueue(T e) {cells.add(cells.size() , e);
 	}
     
     public synchronized boolean isEmpty(){return cells.isEmpty();}
