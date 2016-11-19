@@ -17,8 +17,8 @@ public class ParallelGameOfLife implements GameOfLife {
 		
 		for (int i = 0; i < threadArraySize.getX(); i++) {
 			for (int j = 0; j < threadArraySize.getY(); j++) {
-				Point start = new Point(i*horizotalCellPerThread,j*verticalCellPerThread);
-				Point end = new Point ((i+1)*horizotalCellPerThread-1,(j+1)*verticalCellPerThread-1);
+				Point start = new Point(i*verticalCellPerThread,j*horizotalCellPerThread);
+				Point end = new Point ((i+1)*verticalCellPerThread-1,(j+1)*horizotalCellPerThread-1);
 				if (i == threadArraySize.getX()-1)
 					end.setX(boardSize.getX() - 1);
 				if (j == threadArraySize.getY()-1)

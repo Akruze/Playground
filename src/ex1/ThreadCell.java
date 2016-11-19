@@ -1,7 +1,6 @@
 package ex1;
 
 import java.util.ArrayList;
-
 public class ThreadCell extends Thread {
 
 	// Reference to an array that contains all threads
@@ -192,8 +191,8 @@ public class ThreadCell extends Thread {
         	}
         }
         
-        if(c.getPoint()==maxPoint){ //send bottom right
-        	if((c.getPoint().getY()<initSize.getY())&&(c.getPoint().getX() < initSize.getX())){
+        if(c.getPoint().getX()==maxPoint.getX()&&c.getPoint().getY()==maxPoint.getY()){ //send bottom right
+        	if((c.getPoint().getY()<initSize.getY()-1)&&(c.getPoint().getX() < initSize.getX()-1)){
         		threadArrayRef[threadLocation.getX()+1][threadLocation.getY()+1].AddToQueue(new Cell(c));
         	}
         }
@@ -210,7 +209,7 @@ public class ThreadCell extends Thread {
         	}
         }
         
-        if(c.getPoint() ==minPoint){ // send upper left
+        if(c.getPoint().getX()==minPoint.getX()&&c.getPoint().getY()==minPoint.getY()){ // send upper left
         	if(c.getPoint().getX() > 0 && c.getPoint().getY() > 0 ){
         		threadArrayRef[threadLocation.getX()-1][threadLocation.getY()-1].AddToQueue(new Cell(c));
         	}
@@ -245,13 +244,13 @@ public class ThreadCell extends Thread {
             toX = 0;
         else if (c.getPoint().getX()>this.maxPoint.getX()) /*case the cell is in the most right column*/
             toX = this.cellArraySize.getX() - 1;
-        else toX = this.maxPoint.getX()-c.getPoint().getX()+2; /*case the cell is in between*/
+        else toX = c.getPoint().getX()-this.minPoint.getX()+1; /*case the cell is in between*/
 
         if (c.getPoint().getY()<this.minPoint.getY()) /*case the cell is in the first row*/
             toY = 0;
         else if (c.getPoint().getY()>this.maxPoint.getY()) /*case the cell is in the bottom row*/
             toY = this.cellArraySize.getY() - 1;
-        else toY = this.maxPoint.getY()-c.getPoint().getY()+2; /*case the cell is in between*/
+        else toY = c.getPoint().getY()-this.minPoint.getY()+1; /*case the cell is in between*/
 
         cellArray[toX][toY] = new Cell(c);
     }
@@ -290,9 +289,8 @@ public class ThreadCell extends Thread {
                 if (i==x && j==y) continue;
                 
                 Boolean b = cellArray[i][j].genState(genToCalcMinusOne);
-
-				if (b == null){
-					//System.out.println(cellArray[x][y].getPoint()+" "+cellArray[x][y].getCurrGen()+" "+cellArray[i][j].getPoint()+" "+minPoint+" "+maxPoint);
+                
+				if (b == null){	
 					return null;
 				}
 	               
